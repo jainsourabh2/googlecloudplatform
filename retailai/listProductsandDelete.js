@@ -1,3 +1,5 @@
+//https://github.com/googleapis/nodejs-retail/tree/main/samples/generated/v2 
+
 'use strict';
 
 function main() {
