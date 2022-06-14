@@ -1,4 +1,3 @@
-#https://github.com/apache/beam/blob/master/sdks/python/apache_beam/examples/kafkataxi/kafka_taxi.py
 #https://beam.apache.org/documentation/sdks/python-streaming/
 from apache_beam.options.pipeline_options import PipelineOptions
 from google.cloud import pubsub_v1
