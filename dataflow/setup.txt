@@ -1,17 +1,21 @@
-pip install apache-beam[gcp]
+pip3 install apache-beam[gcp]
 
 export PROJECT=<<project-id>>
 export REGION=<<region-id>>
+export STAGING_LOCATION=gs://customer-demos-asia-south1/dataflow/staging
+export TEMP_LOCATION=gs://customer-demos-asia-south1/dataflow/temp
+export TEMPLATE_LOCATION=gs://customer-demos-asia-south1/dataflow/templates
+
 
 generate template with static values:
-python -m etl_pipeline --runner DataflowRunner --project=$PROJECT --staging_location gs://customer-demos-asia-south1/dataflow/staging --temp_location gs://customer-demos-asia-south1/dataflow/temp --template_location gs://customer-demos-asia-south1/dataflow/templates/etl_pipeline --region REGION
+python -m etl_pipeline --runner DataflowRunner --project=$PROJECT --staging_location $STAGING_LOCATION --temp_location $TEMP_LOCATION --template_location $TEMPLATE_LOCATION/etl_pipeline --region $REGION
 
 generate template with runtime values:
-python -m etl_pipeline_runtime --runner DataflowRunner --project=$PROJECT --staging_location gs://customer-demos-asia-south1/dataflow/staging --temp_location gs://customer-demos-asia-south1/dataflow/temp --template_location gs://customer-demos-asia-south1/dataflow/templates/etl_pipeline_runtime --region REGION --experiment=use_beam_bq_sink
+python -m etl_pipeline_runtime --runner DataflowRunner --project=$PROJECT --staging_location $STAGING_LOCATION --temp_location $TEMP_LOCATION --template_location $TEMPLATE_LOCATION/etl_pipeline_runtime --region $REGION --experiment=use_beam_bq_sink
 
 execute the pipeline with runtime parameters:
 gcloud dataflow jobs run template-csv-gcs-bq \
- --gcs-location gs://customer-demos-asia-south1/dataflow/templates/etl_pipeline_runtime \
- --region REGION \
+ --gcs-location $TEMPLATE_LOCATION/etl_pipeline_runtime \
+ --region $REGION \
  --parameters input_file_path=gs://customer-demos-asia-south1/dataflow/input/*.csv,bq_table_id=dataflow_python.biketrips2021 \
  --subnetwork=https://www.googleapis.com/compute/v1/projects/on-prem-project-337210/regions/asia-south1/subnetworks/on-prem-subnet-mumbai
