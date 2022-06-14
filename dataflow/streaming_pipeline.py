@@ -1,4 +1,3 @@
-#https://towardsdatascience.com/lets-build-a-streaming-data-pipeline-e873d671fc57
 from apache_beam.options.pipeline_options import PipelineOptions
 from google.cloud import pubsub_v1
 from google.cloud import bigquery
