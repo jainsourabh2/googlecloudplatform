@@ -1,0 +1,6 @@
+1) Create the dataset folder as shown.
+2) Copy the face,model and third_party folder.
+3) Run the Python script face_alignment_step1.py
+4) Run the Python script face_alignment_step2.py
+5) Execute the steps in the Notebook face_vertexai_match_create_index_step3.ipynb
+6) Execute the steps in the Notebook face_input_generate_embeddings_step4.ipynb
