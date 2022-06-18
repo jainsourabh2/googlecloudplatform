@@ -1,3 +1,10 @@
+
+0) Install Dependencies
+python==3.7
+mtcnn==0.1.1
+tensorflow==2.7.0
+Pillow==8.4.0
+
 1) Create the dataset folder as shown.
 2) Copy the face,model and third_party folder.
 3) Run the Python script face_alignment_step1.py
