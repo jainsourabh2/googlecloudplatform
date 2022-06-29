@@ -136,32 +136,12 @@ def parse_json(element):
                 "properties_reco_api_id",
                 "properties_is_liked",
                 "properties_is_shared",
-                "properties_user_region",
-                "properties_item_category_id",
-                "properties_longitude",
-                "properties_latitude",
-                "properties_event_attribution",
-                "properties_user_segment",
-                "properties_user_feed_logic",
-                "properties_topics",
-                "properties_event_attribution_id",
-                "properties_tab_index",
-                "properties_page_number",
-                "properties_tab_name",
-                "properties_tab_id",
-                "properties_item_tag_id",
-                "properties_item_tag_ids",
-                "properties_pagenumber",
-                "properties_group_type",
-                "properties_content_type",
-                "properties_candidate_size",
-                "properties_target_user_id"
+                "properties_user_region"
                 ]
     for i in json_cols:
         new_json[i] = element.get(i)
     new_json = json.dumps(new_json)
-    #print(new_json)
-    return json.loads(new_json)
+    return new_json
 
 class GroupMessagesByFixedWindows(PTransform):
     """A composite transform that groups Pub/Sub messages based on publish time
