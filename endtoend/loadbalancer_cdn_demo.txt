@@ -1,3 +1,7 @@
+# Create the default VPC. Run it only if it doesnt exist.
+======================================
+gcloud compute networks create default --subnet-mode=auto
+
 # Enable the APIs
 ======================================
 gcloud services enable compute.googleapis.com # to enable compute APIs
