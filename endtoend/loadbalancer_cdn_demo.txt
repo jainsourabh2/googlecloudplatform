@@ -1,0 +1,189 @@
+# Enable the APIs
+======================================
+gcloud services enable compute.googleapis.com # to enable compute APIs
+
+#Creatng the VMs
+======================================
+gcloud compute instances create html-instance-us-central1-b --zone us-central1-b --network default --metadata startup-script="#! /bin/bash
+	sudo apt-get update
+	sudo apt-get install apache2 -y
+	sudo service apache2 restart
+	echo '<!doctype html><html><body><h1>web-html</h1></body></html>' | sudo tee /var/www/html/index.html
+	EOF"
+
+gcloud compute instances create video-instance-us-central1-b --zone us-central1-b --network default --metadata startup-script="#! /bin/bash
+	sudo apt-get update
+	sudo apt-get install apache2 -y
+	sudo service apache2 restart
+	echo '<!doctype html><html><body><h1>web-video</h1></body></html>' | sudo tee /var/www/html/index.html
+	sudo mkdir /var/www/html/video
+	echo '<!doctype html><html><body><h1>web-video</h1></body></html>' | sudo tee /var/www/html/video/index.html
+	EOF"
+
+gcloud compute instances create html-instance-europe-west1-b --zone europe-west1-b --network default --metadata startup-script="#! /bin/bash
+	sudo apt-get update
+	sudo apt-get install apache2 -y
+	sudo service apache2 restart
+	echo '<!doctype html><html><body><h1>web-html</h1></body></html>' | sudo tee /var/www/html/index.html
+	EOF"
+
+gcloud compute instances create video-instance-europe-west1-b --zone europe-west1-b --network default --metadata startup-script="#! /bin/bash
+	sudo apt-get update
+	sudo apt-get install apache2 -y
+	sudo service apache2 restart
+	echo '<!doctype html><html><body><h1>web-video</h1></body></html>' | sudo tee /var/www/html/index.html
+	sudo mkdir /var/www/html/video
+	echo '<!doctype html><html><body><h1>web-video</h1></body></html>' | sudo tee /var/www/html/video/index.html
+	EOF"
+
+#Creatng the unmanaged instance groups
+======================================
+gcloud compute instance-groups unmanaged create video-instance-group-us-central1-b --zone us-central1-b
+
+gcloud compute instance-groups unmanaged create html-instance-group-us-central1-b --zone us-central1-b 
+
+gcloud compute instance-groups unmanaged create video-instance-group-europe-west1-b --zone europe-west1-b
+
+gcloud compute instance-groups unmanaged create html-instance-group-europe-west1-b --zone europe-west1-b 
+
+# Add the created VMs to unmanaged instance groups.
+======================================
+gcloud compute instance-groups unmanaged add-instances video-instance-group-us-central1-b --instances video-instance-us-central1-b --zone us-central1-b
+
+gcloud compute instance-groups unmanaged add-instances html-instance-group-us-central1-b --instances html-instance-us-central1-b --zone us-central1-b
+
+gcloud compute instance-groups unmanaged add-instances video-instance-group-europe-west1-b --instances video-instance-europe-west1-b --zone europe-west1-b
+
+gcloud compute instance-groups unmanaged add-instances html-instance-group-europe-west1-b --instances html-instance-europe-west1-b --zone europe-west1-b
+
+# Configure port for unmanaged instance groups.
+======================================
+gcloud compute instance-groups unmanaged set-named-ports video-instance-group-us-central1-b --named-ports http:80 --zone us-central1-b
+
+gcloud compute instance-groups unmanaged set-named-ports html-instance-group-us-central1-b --named-ports http:80 --zone us-central1-b
+
+gcloud compute instance-groups unmanaged set-named-ports video-instance-group-europe-west1-b --named-ports http:80 --zone europe-west1-b
+
+gcloud compute instance-groups unmanaged set-named-ports html-instance-group-europe-west1-b --named-ports http:80 --zone europe-west1-b
+
+# Configure basic health check
+======================================
+gcloud compute health-checks create http http-health-check --port 80 # to create healthcheck
+
+# Create back-end service
+======================================
+gcloud compute backend-services create video-backend-service --protocol HTTP --health-checks http-health-check --global
+
+gcloud compute backend-services create html-backend-service --protocol HTTP --health-checks http-health-check --global
+
+#Create URL Maps
+======================================
+gcloud compute url-maps create www-url-map --default-service html-backend-service
+
+#Add path mapper to your URL map
+======================================
+gcloud compute url-maps add-path-matcher www-url-map --default-service html-backend-service --path-matcher-name pathmap --path-rules "/video=video-backend-service,/video/*=video-backend-service"
+
+#Create Target HTTP proxy to route requests to your URL map
+======================================
+gcloud compute target-http-proxies create www-target-http-proxy --url-map www-url-map
+
+
+#Create Static IPv4 address
+======================================
+gcloud compute addresses create ipv4-address --ip-version IPV4 --global
+
+#Set Environment variable for the IP address
+======================================
+export IPV4=$(gcloud compute addresses list --format'value(ADDRESS)' --filter='name:ipv4-address') # to set static IPV4 address
+
+#Create IPV4 global forwarding rule. The IP is the IP generated in the previous step.
+======================================
+gcloud compute forwarding-rules create www-forwarding-rule-ipv4 --address 34.160.216.190 --global --target-http-proxy www-target-http-proxy --ports 80
+
+#Create firewall rule. The IPs are the google provided IPs for whitelisting health checks.
+======================================
+gcloud compute firewall-rules create www-firewall-rule --network default --source-ranges 130.211.0.0/22,35.191.0.0/16 --allow tcp:80
+
+#Create firewall rule. This is needed for logging to the machine and generating the load.
+#Instead of 0.0.0.0/0 , please use the ip address from which you are running this script.
+======================================
+gcloud compute firewall-rules create www-firewall-rule --network default --source-ranges 0.0.0.0/0 --allow tcp:22
+
+
+#Create back-end service
+======================================
+gcloud compute backend-services add-backend video-backend-service --balancing-mode UTILIZATION --max-utilization 0.8 --capacity-scaler 1 --instance-group video-instance-group-us-central1-b --instance-group-zone us-central1-b --global
+
+gcloud compute backend-services add-backend html-backend-service --balancing-mode UTILIZATION --max-utilization 0.8 --capacity-scaler 1 --instance-group html-instance-group-us-central1-b --instance-group-zone us-central1-b --global
+
+
+gcloud compute backend-services add-backend video-backend-service --balancing-mode UTILIZATION --max-utilization 0.8 --capacity-scaler 1 --instance-group video-instance-group-europe-west1-b --instance-group-zone europe-west1-b --global
+
+gcloud compute backend-services add-backend html-backend-service --balancing-mode UTILIZATION --max-utilization 0.8 --capacity-scaler 1 --instance-group html-instance-group-europe-west1-b --instance-group-zone europe-west1-b --global
+
+
+#Create machines for test purpose.
+======================================
+gcloud compute instances create asia-loadtest --network default --zone asia-east1-b --metadata startup-script='apt-get -y install siege' --preemptible
+
+gcloud compute instances create europe-loadtest --network default --zone europe-west1-b --metadata startup-script='apt-get -y install siege' --preemptible
+
+gcloud compute instances create us-loadtest --network default --zone us-central1-b --metadata startup-script='apt-get -y install siege' --preemptible
+
+#Generate Load
+======================================
+gcloud compute ssh --zone asia-east1-b asia-loadtest --command="siege -c150 http://34.160.216.190/" &
+
+gcloud compute ssh --zone asia-east1-b asia-loadtest --command="siege -c150 http://34.160.216.190/video" &
+
+gcloud compute ssh --zone us-central1-b us-loadtest --command="siege -c150 http://34.160.216.190/" &
+
+gcloud compute ssh --zone us-central1-b us-loadtest --command="siege -c150 http://34.160.216.190/video" &
+
+gcloud compute ssh --zone europe-west1-b europe-loadtest --command="siege -c150 http://34.160.216.190/" &
+
+gcloud compute ssh --zone europe-west1-b europe-loadtest --command="siege -c150 http://34.160.216.190/video" &
+
+
+# Create cloud storage bucket(on-prem-project-337210)
+======================================
+gsutil mb -l europe-west4 gs://<<unique_bucket_name>>
+gsutil mb -l europe-west4 gs://on-prem-project-337210
+
+# Permissions for the bucket
+======================================
+gsutil iam ch allUsers:objectViewer gs://<<unique_bucket_name>>
+gsutil iam ch allUsers:objectViewer gs://on-prem-project-337210
+
+# Upload file to the bucket
+======================================
+gsutil cp /local/path/20mb/image_5mb.JPG gs://<<unique_bucket_name>>/static
+gsutil cp /home/admin_/image_5mb.JPG gs://on-prem-project-337210/static
+
+# Modify URL Map and storage as backend
+======================================
+gcloud compute backend-buckets create static-backend-bucket --gcs-bucket-name <<unique_bucket_name>>
+gcloud compute backend-buckets create static-backend-bucket --gcs-bucket-name on-prem-project-337210
+
+
+# Removing existing path matcher
+======================================
+gcloud compute url-maps remove-path-matcher www-url-map --path-matcher-name pathmap
+
+# Create new path matcher
+======================================
+gcloud compute url-maps add-path-matcher www-url-map --default-service html-backend-service --path-matcher-name pathmap --backend-bucket-path-rules '/static/*=static-backend-bucket' --backend-service-path-rules '/video=video-backend-service,/video/*=video-backend-service'
+
+#Enable CDN
+======================================
+gcloud compute backend-buckets update static-backend-bucket --enable-cdn
+
+#Generate Load for static bucket
+======================================
+gcloud compute ssh --zone asia-east1-b asia-loadtest --command="for i in {1..10};do curl -s -w '%{time_total}\n' -o /dev/null http://34.160.216.190/static/image_5mb.JPG; done" &
+
+gcloud compute ssh --zone us-central1-b us-loadtest --command="for i in {1..10};do curl -s -w '%{time_total}\n' -o /dev/null http://34.160.216.190/static/image_5mb.JPG; done" &
+
+gcloud compute ssh --zone europe-west1-b europe-loadtest --command="for i in {1..10};do curl -s -w '%{time_total}\n' -o /dev/null http://34.160.216.190/static/image_5mb.JPG; done" &
+
