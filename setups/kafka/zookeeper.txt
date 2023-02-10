@@ -1,0 +1,176 @@
+gcloud auth login 
+
+gcloud config set project on-prem-project-337210
+
+gcloud config set compute/region us-east4
+
+gcloud compute networks create logging-cluster-vpc --subnet-mode custom
+
+gcloud compute networks subnets create logging-cluster-vpc-subnet --network logging-cluster-vpc --range 10.65.0.0/20
+
+gcloud compute firewall-rules create kafka-cluster-vpc-allow-kafka-zookeeper \
+--description="Allow traffic between Kafka brokers and Zookeeper nodes" \
+--direction=INGRESS --priority=1000 --network=logging-cluster-vpc --action=ALLOW \
+--rules=all --source-tags=kafka \
+--target-tags=kafka
+
+gcloud compute firewall-rules create allow-ssh-ingress-from-iap \
+  --direction=INGRESS \
+  --action=allow \
+  --rules=tcp:22 \
+  --source-ranges=35.235.240.0/20 \
+  --network=logging-cluster-vpc
+  
+gcloud compute instances create zk-01 \
+    --async \
+    --boot-disk-size 100GB \
+    --image centos-7-v20230203 \
+    --image-project centos-cloud \
+    --machine-type e2-small \
+    --private-network-ip 10.65.0.13 \
+    --scopes=https://www.googleapis.com/auth/cloud-platform \
+    --subnet logging-cluster-vpc-subnet \
+    --tags kafka \
+    --labels=application=zookeeper \
+    --zone=us-east4-a \
+    --no-address
+    
+gcloud compute instances list --filter="tags.items=kafka"
+
+gcloud beta compute ssh zk-01 --tunnel-through-iap --zone=us-east4-a
+
+sudo apt update 
+sudo apt install default-jdk -y
+
+sudo useradd zkadmin -m && sudo usermod --shell /bin/bash zkadmin
+sudo passwd zkadmin
+sudo usermod -aG sudo zkadmin
+su -l zkadmin
+sudo mkdir -p /data/zookeeper
+sudo chown -R zkadmin:zkadmin /data/zookeeper
+cd /opt
+sudo wget https://dlcdn.apache.org/zookeeper/stable/apache-zookeeper-3.7.1-bin.tar.gz
+sudo tar -xvf apache-zookeeper-3.7.1-bin.tar.gz
+sudo chown zkadmin:zkadmin -R  apache-zookeeper-3.7.1-bin
+sudo ln -s apache-zookeeper-3.7.1-bin zookeeper
+sudo chown -h zkadmin:zkadmin /opt/zookeeper
+sudo chown -R zkadmin:zkadmin /opt/zookeeper
+
+
+c
+tickTime=2000
+dataDir=/data/zookeeper
+clientPort=2181
+initLimit=10
+syncLimit=5
+
+cd /opt/zookeeper && /opt/zookeeper/bin/zkServer.sh start
+
+bin/zkServer.sh stop
+
+sudo vim /etc/systemd/system/zookeeper.service
+
+[Unit]
+Description=Zookeeper Daemon
+Documentation=http://zookeeper.apache.org
+Requires=network.target
+After=network.target
+
+[Service]
+Type=forking
+WorkingDirectory=/opt/zookeeper
+User=zkadmin
+Group=zkadmin
+ExecStart=/opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
+ExecStop=/opt/zookeeper/bin/zkServer.sh stop /opt/zookeeper/conf/zoo.cfg
+ExecReload=/opt/zookeeper/bin/zkServer.sh restart /opt/zookeeper/conf/zoo.cfg
+TimeoutSec=30
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+gcloud beta compute machine-images \
+  create zookeeper-machine-image \
+  --source-instance zk-01 \
+  --source-instance-zone us-east4-a
+  
+#Create Node 2 
+  gcloud beta compute instances create zk-02 \
+    --source-machine-image zookeeper-machine-image  \
+    --zone us-east4-b \
+    --machine-type e2-small \
+    --private-network-ip 10.65.0.11 \
+    --subnet logging-cluster-vpc-subnet \
+    --tags kafka \
+    --labels=application=zookeeper \
+    --no-address
+    
+#Create Node 3
+  gcloud beta compute instances create zk-03 \
+    --source-machine-image zookeeper-machine-image  \
+    --zone us-east4-c \
+    --machine-type e2-small \
+    --private-network-ip 10.65.0.12 \
+    --subnet logging-cluster-vpc-subnet \
+    --tags kafka \
+    --labels=application=zookeeper \
+    --no-address
+  
+gcloud beta compute ssh zk-01 \
+    --tunnel-through-iap \
+    --zone=us-east4-a \
+    --command 'echo "1" | sudo tee /data/zookeeper/myid  && sudo chown -R zkadmin:zkadmin /data/zookeeper'
+gcloud beta compute ssh zk-02 \
+    --tunnel-through-iap \
+    --zone=us-east4-b \
+    --command  'echo "2" | sudo tee /data/zookeeper/myid && sudo chown -R zkadmin:zkadmin /data/zookeeper'
+gcloud beta compute ssh zk-03 \
+    --tunnel-through-iap \
+    --zone=us-east4-c \
+    --command  'echo "3" | sudo tee /data/zookeeper/myid && sudo chown -R zkadmin:zkadmin /data/zookeeper'
+    
+su -l zkadmin
+
+vim /opt/zookeeper/conf/zoo.cfg
+
+tickTime=2000
+dataDir=/data/zookeeper
+clientPort=2181
+initLimit=10
+syncLimit=5
+server.1=zk-01.us-east4-a.c.cloudside-academy.internal:2888:3888
+server.2=zk-02.us-east4-b.c.cloudside-academy.internal:2888:3888
+server.3=zk-03.us-east4-c.c.cloudside-academy.internal:2888:3888
+4lw.commands.whitelist=*
+
+gcloud beta compute ssh zk-01 \
+    --tunnel-through-iap \
+    --zone=us-east4-a \
+    --command 'sudo systemctl enable zookeeper.service && sudo systemctl start zookeeper.service'
+    
+gcloud beta compute ssh zk-02 \
+    --tunnel-through-iap \
+    --zone=us-east4-b \
+    --command  'sudo systemctl enable zookeeper.service && sudo systemctl start zookeeper.service'
+    
+gcloud beta compute ssh zk-03 \
+    --tunnel-through-iap \
+    --zone=us-east4-c \
+    --command  'sudo systemctl enable zookeeper.service && sudo systemctl start zookeeper.service'
+
+
+gcloud beta compute ssh zk-01 \
+    --tunnel-through-iap \
+    --zone=us-east4-a \
+    --command 'echo stat | nc localhost 2181 | grep Mode'
+    
+gcloud beta compute ssh zk-02 \
+    --tunnel-through-iap \
+    --zone=us-east4-b \
+    --command  'echo stat | nc localhost 2181 | grep Mode'
+    
+gcloud beta compute ssh zk-03 \
+    --tunnel-through-iap \
+    --zone=us-east4-c \
+    --command  'echo stat | nc localhost 2181 | grep Mode'
