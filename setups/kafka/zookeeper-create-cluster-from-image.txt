@@ -1,10 +1,10 @@
 #Create Node 1 
-  gcloud beta compute instances create zk-02 \
+  gcloud beta compute instances create zk-01 \
     --source-machine-image zookeeper-machine-image  \
-    --zone us-east4-a \
-    --machine-type e2-small \
+    --zone ${region_zone_a} \
+    --machine-type ${zookeeper_machine_type} \
     --private-network-ip 10.65.0.10 \
-    --subnet logging-cluster-vpc-subnet \
+    --subnet ${vpc_subnet} \
     --tags kafka \
     --labels=application=zookeeper \
     --no-address
@@ -12,10 +12,10 @@
 #Create Node 2 
   gcloud beta compute instances create zk-02 \
     --source-machine-image zookeeper-machine-image  \
-    --zone us-east4-b \
-    --machine-type e2-small \
+    --zone ${region_zone_b} \
+    --machine-type ${zookeeper_machine_type} \
     --private-network-ip 10.65.0.11 \
-    --subnet logging-cluster-vpc-subnet \
+    --subnet ${vpc_subnet} \
     --tags kafka \
     --labels=application=zookeeper \
     --no-address
@@ -23,10 +23,10 @@
 #Create Node 3
   gcloud beta compute instances create zk-03 \
     --source-machine-image zookeeper-machine-image  \
-    --zone us-east4-c \
-    --machine-type e2-small \
+    --zone ${region_zone_c} \
+    --machine-type ${zookeeper_machine_type} \
     --private-network-ip 10.65.0.12 \
-    --subnet logging-cluster-vpc-subnet \
+    --subnet ${vpc_subnet} \
     --tags kafka \
     --labels=application=zookeeper \
     --no-address
@@ -44,9 +44,9 @@ gcloud beta compute ssh zk-03 \
     --zone=us-east4-c \
     --command  'echo "3" | sudo tee /data/zookeeper/myid && sudo chown -R zkadmin:zkadmin /data/zookeeper'
 
-gcloud beta compute ssh zk-01 --tunnel-through-iap --zone=us-east4-a
-gcloud beta compute ssh zk-02 --tunnel-through-iap --zone=us-east4-b
-gcloud beta compute ssh zk-03 --tunnel-through-iap --zone=us-east4-c
+gcloud beta compute ssh zk-01 --tunnel-through-iap --zone=${region_zone_a}
+gcloud beta compute ssh zk-02 --tunnel-through-iap --zone=${region_zone_b}
+gcloud beta compute ssh zk-03 --tunnel-through-iap --zone=${region_zone_c}
 
 ## Repeat below for all the above 3 machines.
 #############################################
@@ -67,31 +67,31 @@ server.3=zk-03.us-east4-c.c.<<project-id>>.internal:2888:3888
 
 gcloud beta compute ssh zk-01 \
     --tunnel-through-iap \
-    --zone=us-east4-a \
+    --zone=${region_zone_a} \
     --command 'sudo systemctl enable zookeeper.service && sudo systemctl start zookeeper.service'
     
 gcloud beta compute ssh zk-02 \
     --tunnel-through-iap \
-    --zone=us-east4-b \
+    --zone=${region_zone_b} \
     --command  'sudo systemctl enable zookeeper.service && sudo systemctl start zookeeper.service'
     
 gcloud beta compute ssh zk-03 \
     --tunnel-through-iap \
-    --zone=us-east4-c \
+    --zone=${region_zone_c} \
     --command  'sudo systemctl enable zookeeper.service && sudo systemctl start zookeeper.service'
 
 
 gcloud beta compute ssh zk-01 \
     --tunnel-through-iap \
-    --zone=us-east4-a \
+    --zone=${region_zone_a} \
     --command 'echo stat | nc localhost 2181 | grep Mode'
     
 gcloud beta compute ssh zk-02 \
     --tunnel-through-iap \
-    --zone=us-east4-b \
+    --zone=${region_zone_b} \
     --command  'echo stat | nc localhost 2181 | grep Mode'
     
 gcloud beta compute ssh zk-03 \
     --tunnel-through-iap \
-    --zone=us-east4-c \
+    --zone=${region_zone_c} \
     --command  'echo stat | nc localhost 2181 | grep Mode'
