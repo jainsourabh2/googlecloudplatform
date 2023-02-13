@@ -14,6 +14,6 @@ gcloud compute addresses delete kafka-broker-01-ip kafka-broker-02-ip kafka-brok
 
 # Delete subnet and VPC
 gcloud compute routers nats delete ${nat_gateway_name} --router=${router_name} --region=${region}
-gcloud compute routers delete ${router_name} region=${region}
+gcloud compute routers delete ${router_name}
 gcloud compute networks subnets delete ${vpc_subnet}
 gcloud compute networks delete ${vpc}
