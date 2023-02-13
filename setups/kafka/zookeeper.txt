@@ -129,7 +129,11 @@ gcloud beta compute ssh zk-03 \
     --tunnel-through-iap \
     --zone=us-east4-c \
     --command  'echo "3" | sudo tee /data/zookeeper/myid && sudo chown -R zkadmin:zkadmin /data/zookeeper'
-    
+
+gcloud beta compute ssh zk-01 --tunnel-through-iap --zone=us-east4-a
+gcloud beta compute ssh zk-02 --tunnel-through-iap --zone=us-east4-b
+gcloud beta compute ssh zk-03 --tunnel-through-iap --zone=us-east4-c
+
 su -l zkadmin
 
 vim /opt/zookeeper/conf/zoo.cfg
