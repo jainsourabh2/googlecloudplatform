@@ -52,11 +52,12 @@ gcloud compute instances list --filter="tags.items=kafka"
 gcloud beta compute ssh zk --tunnel-through-iap --zone=${region_zone_a}
 
 sudo yum update 
-sudo yum install default-jdk -y
+sudo yum install java-11-openjdk-devel
+sudo yum install wget
 
 sudo useradd zkadmin -m && sudo usermod --shell /bin/bash zkadmin
 sudo passwd zkadmin
-sudo usermod -aG sudo zkadmin
+sudo usermod -aG wheel zkadmin
 su -l zkadmin
 sudo mkdir -p /data/zookeeper
 sudo chown -R zkadmin:zkadmin /data/zookeeper
@@ -103,6 +104,8 @@ Restart=on-failure
 WantedBy=default.target
 
 gcloud beta compute machine-images \
-  create zookeeper-machine-image \
+  create zookeeper-machine-image- \
   --source-instance zk \
   --source-instance-zone ${region_zone_a}
+  
+gcloud compute instances delete zk
