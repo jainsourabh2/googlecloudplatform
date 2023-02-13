@@ -33,15 +33,15 @@
   
 gcloud beta compute ssh zk-01 \
     --tunnel-through-iap \
-    --zone=us-east4-a \
+    --zone=${region_zone_a} \
     --command 'echo "1" | sudo tee /data/zookeeper/myid  && sudo chown -R zkadmin:zkadmin /data/zookeeper'
 gcloud beta compute ssh zk-02 \
     --tunnel-through-iap \
-    --zone=us-east4-b \
+    --zone=${region_zone_b} \
     --command  'echo "2" | sudo tee /data/zookeeper/myid && sudo chown -R zkadmin:zkadmin /data/zookeeper'
 gcloud beta compute ssh zk-03 \
     --tunnel-through-iap \
-    --zone=us-east4-c \
+    --zone=${region_zone_c} \
     --command  'echo "3" | sudo tee /data/zookeeper/myid && sudo chown -R zkadmin:zkadmin /data/zookeeper'
 
 gcloud beta compute ssh zk-01 --tunnel-through-iap --zone=${region_zone_a}
