@@ -1,16 +1,16 @@
 gcloud auth login 
 
-gcloud config set project <<project-id>>
+gcloud config set project ${project-id}
 
-gcloud config set compute/region us-east4
+gcloud config set compute/region ${region}
 
-gcloud compute networks create logging-cluster-vpc --subnet-mode custom
+gcloud compute networks create ${vpc} --subnet-mode custom
 
-gcloud compute networks subnets create logging-cluster-vpc-subnet --network logging-cluster-vpc --range 10.65.0.0/20
+gcloud compute networks subnets create ${vpc-subnet} --network ${vpc} --range ${vpc-subnet-cidr}
 
 gcloud compute firewall-rules create kafka-cluster-vpc-allow-kafka-zookeeper \
 --description="Allow traffic between Kafka brokers and Zookeeper nodes" \
---direction=INGRESS --priority=1000 --network=logging-cluster-vpc --action=ALLOW \
+--direction=INGRESS --priority=1000 --network=${vpc} --action=ALLOW \
 --rules=all --source-tags=kafka \
 --target-tags=kafka
 
@@ -19,9 +19,9 @@ gcloud compute firewall-rules create allow-ssh-ingress-from-iap \
   --action=allow \
   --rules=tcp:22 \
   --source-ranges=35.235.240.0/20 \
-  --network=logging-cluster-vpc
+  --network=${vpc}
   
-gcloud compute instances create zk-01 \
+gcloud compute instances create zk \
     --async \
     --boot-disk-size 100GB \
     --image centos-7-v20230203 \
@@ -29,15 +29,15 @@ gcloud compute instances create zk-01 \
     --machine-type e2-small \
     --private-network-ip 10.65.0.13 \
     --scopes=https://www.googleapis.com/auth/cloud-platform \
-    --subnet logging-cluster-vpc-subnet \
+    --subnet ${vpc-subnet} \
     --tags kafka \
     --labels=application=zookeeper \
-    --zone=us-east4-a \
+    --zone=${region-zone-a} \
     --no-address
     
 gcloud compute instances list --filter="tags.items=kafka"
 
-gcloud beta compute ssh zk-01 --tunnel-through-iap --zone=us-east4-a
+gcloud beta compute ssh zk-01 --tunnel-through-iap --zone=${region-zone-a}
 
 sudo apt update 
 sudo apt install default-jdk -y
@@ -56,8 +56,6 @@ sudo ln -s apache-zookeeper-3.7.1-bin zookeeper
 sudo chown -h zkadmin:zkadmin /opt/zookeeper
 sudo chown -R zkadmin:zkadmin /opt/zookeeper
 
-
-c
 tickTime=2000
 dataDir=/data/zookeeper
 clientPort=2181
@@ -92,5 +90,5 @@ WantedBy=default.target
 
 gcloud beta compute machine-images \
   create zookeeper-machine-image \
-  --source-instance zk-01 \
-  --source-instance-zone us-east4-a
+  --source-instance zk \
+  --source-instance-zone ${region-zone-a}
