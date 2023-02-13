@@ -1,38 +1,40 @@
-gcloud compute addresses create kafka-broker-01-ip \
-    --region us-east4 --subnet logging-cluster-vpc-subnet --addresses 10.65.0.13
+    gcloud compute addresses create kafka-broker-01-ip \
+    --region ${region} --subnet ${vpc_subnet} --addresses 10.65.0.13
     
     gcloud compute addresses create kafka-broker-02-ip \
-    --region us-east4 --subnet logging-cluster-vpc-subnet --addresses 10.65.0.14
+    --region ${region} --subnet ${vpc_subnet} --addresses 10.65.0.14
     
     gcloud compute addresses create kafka-broker-03-ip \
-    --region us-east4 --subnet logging-cluster-vpc-subnet --addresses 10.65.0.15
+    --region ${region} --subnet ${vpc_subnet} --addresses 10.65.0.15
     
     gcloud compute instances create kafka-broker-01 \
     --async \
     --boot-disk-size 100GB \
     --image centos-7-v20230203 \
     --image-project centos-cloud \
-    --machine-type e2-small \
+    --machine-type ${kafka_machine_type} \
     --private-network-ip 10.65.0.13 \
     --scopes=https://www.googleapis.com/auth/cloud-platform \
-    --subnet logging-cluster-vpc-subnet \
+    --subnet ${vpc_subnet} \
     --tags kafka \
     --labels=application=kafka \
-    --zone=us-east4-a \
+    --zone=${region_zone_a} \
     --no-address
     
 gcloud beta compute ssh kafka-broker-01 \
     --tunnel-through-iap \
-    --zone=us-east4-a
+    --zone=${region_zone_a}
     
 ## install jdk
-sudo yum update && sudo yum install default-jdk -y
+sudo yum update 
+sudo yum install java-11-openjdk-devel
+sudo yum install wget
 # Add a user
 sudo useradd kafka -m && sudo usermod --shell /bin/bash kafka
 #set a password for kafka 
 sudo passwd kafka
 # Add kafka user to sudoers 
-sudo usermod -aG sudo kafka
+sudo usermod -aG wheel kafka
 # make a dir
 sudo mkdir -p /data/kafka && sudo mkdir -p /data/kafka/logs
 # Download binaries 
@@ -109,4 +111,4 @@ ls /brokers/ids
 gcloud beta compute machine-images \
   create kafka-machine-image \
   --source-instance kafka-broker-01 \
-  --source-instance-zone us-east4-a
+  --source-instance-zone ${region_zone_a}
