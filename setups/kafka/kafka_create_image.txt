@@ -7,7 +7,7 @@
     gcloud compute addresses create kafka-broker-03-ip \
     --region ${region} --subnet ${vpc_subnet} --addresses 10.65.0.15
     
-    gcloud compute instances create kafka-broker-01 \
+    gcloud compute instances create kafka-broker \
     --async \
     --boot-disk-size 100GB \
     --image centos-7-v20230203 \
@@ -21,7 +21,7 @@
     --zone=${region_zone_a} \
     --no-address
     
-gcloud beta compute ssh kafka-broker-01 \
+gcloud beta compute ssh kafka-broker \
     --tunnel-through-iap \
     --zone=${region_zone_a}
     
@@ -36,14 +36,20 @@ sudo passwd kafka
 # Add kafka user to sudoers 
 sudo usermod -aG wheel kafka
 # make a dir
-sudo mkdir -p /data/kafka && sudo mkdir -p /data/kafka/logs
+su -l kafka
+sudo mkdir -p /data/kafka/config && sudo mkdir -p /data/kafka/logs
 # Download binaries 
+cd /opt
 sudo wget https://dlcdn.apache.org/kafka/3.4.0/kafka_2.12-3.4.0.tgz
-sudo tar -xvzf kafka_2.12-3.4.0.tgz --strip 1
+sudo tar -xvzf kafka_2.12-3.4.0.tgz
+sudo chown kafka:kafka -R  kafka_2.12-3.4.0
+sudo ln -s kafka_2.12-3.4.0 kafka
+sudo chown -h kafka:kafka /opt/kafka
+sudo chown -R kafka:kafka /opt/kafka
 sudo chown -R kafka:kafka /data/kafka
 
-sudo mv /data/kafka/config/server.properties /data/kafka/config/server.properties-OLD
-vim /data/kafka/config/server.properties #use above config from the gist
+sudo mv /opt/kafka/config/server.properties /opt/kafka/config/server.properties-OLD
+sudo vim /opt/kafka/config/server.properties #use below config
 
 
 #Change the broker id 
@@ -95,8 +101,8 @@ After=network.target remote-fs.target
 [Service]
 Type=simple
 User=kafka
-ExecStart=/bin/sh -c '/data/kafka/bin/kafka-server-start.sh /data/kafka/config/server.properties > /data/kafka/kafka.log 2>&1'
-ExecStop=/home/kafka/kafka/bin/kafka-server-stop.sh
+ExecStart=/bin/sh -c '/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties > /data/kafka/kafka.log 2>&1'
+ExecStop=/opt/kafka/kafka/bin/kafka-server-stop.sh
 Restart=on-abnormal
 [Install]
 WantedBy=multi-user.target
@@ -110,5 +116,7 @@ ls /brokers/ids
 
 gcloud beta compute machine-images \
   create kafka-machine-image \
-  --source-instance kafka-broker-01 \
+  --source-instance kafka-broker \
   --source-instance-zone ${region_zone_a}
+ 
+gcloud compute instances delete kafka-broker
