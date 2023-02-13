@@ -68,6 +68,8 @@ sudo ln -s apache-zookeeper-3.7.1-bin zookeeper
 sudo chown -h zkadmin:zkadmin /opt/zookeeper
 sudo chown -R zkadmin:zkadmin /opt/zookeeper
 
+vim /opt/zookeeper/conf/zoo.cfg
+
 tickTime=2000
 dataDir=/data/zookeeper
 clientPort=2181
