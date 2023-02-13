@@ -21,6 +21,18 @@ gcloud compute firewall-rules create allow-ssh-ingress-from-iap \
   --source-ranges=35.235.240.0/20 \
   --network=${vpc}
   
+gcloud compute routers create ${router-name} \
+    --project=${project-id} \
+    --network=${vpc} \
+    --region=${region}
+
+gcloud compute routers nats create ${nat-gateway-name} \
+    --router=${router-name} \
+    --region=${region} \
+    --auto-allocate-nat-external-ips \
+    --nat-all-subnet-ip-ranges \
+    --enable-logging
+  
 gcloud compute instances create zk \
     --async \
     --boot-disk-size 100GB \
