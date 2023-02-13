@@ -1,0 +1,39 @@
+
+# Create broker 1
+
+gcloud beta compute instances create kafka-broker-01 \
+    --source-machine-image kafka-machine-image  \
+    --zone us-east4-b \
+    --machine-type e2-small \
+    --private-network-ip 10.65.0.14 \
+    --subnet logging-cluster-vpc-subnet \
+    --tags kafka \
+    --labels=application=kafka \
+    --no-address
+   
+# Create broker 2
+
+gcloud beta compute instances create kafka-broker-02 \
+    --source-machine-image kafka-machine-image  \
+    --zone us-east4-b \
+    --machine-type e2-small \
+    --private-network-ip 10.65.0.14 \
+    --subnet logging-cluster-vpc-subnet \
+    --tags kafka \
+    --labels=application=kafka \
+    --no-address
+    
+# Create broker 3
+
+  gcloud beta compute instances create kafka-broker-03 \
+    --source-machine-image kafka-machine-image  \
+    --zone us-east4-c \
+    --machine-type e2-small \
+    --private-network-ip 10.65.0.15 \
+    --subnet logging-cluster-vpc-subnet \
+    --tags kafka \
+    --labels=application=kafka \
+    --no-address
+    
+ #On all the new VMs
+  sudo rm -rf /data/kafka/logs/ && systemctl start kafka
