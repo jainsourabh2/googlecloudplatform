@@ -1,6 +1,6 @@
 gcloud auth login 
 
-gcloud config set project on-prem-project-337210
+gcloud config set project <<project-id>>
 
 gcloud config set compute/region us-east4
 
@@ -143,9 +143,9 @@ dataDir=/data/zookeeper
 clientPort=2181
 initLimit=10
 syncLimit=5
-server.1=zk-01.us-east4-a.c.on-prem-project-337210.internal:2888:3888
-server.2=zk-02.us-east4-b.c.on-prem-project-337210.internal:2888:3888
-server.3=zk-03.us-east4-c.c.on-prem-project-337210.internal:2888:3888
+server.1=zk-01.us-east4-a.c.<<project-id>>.internal:2888:3888
+server.2=zk-02.us-east4-b.c.<<project-id>>.internal:2888:3888
+server.3=zk-03.us-east4-c.c.<<project-id>>.internal:2888:3888
 4lw.commands.whitelist=*
 
 gcloud beta compute ssh zk-01 \
