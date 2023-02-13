@@ -54,6 +54,7 @@ gcloud beta compute ssh zk --tunnel-through-iap --zone=${region_zone_a}
 sudo yum update 
 sudo yum install java-11-openjdk-devel
 sudo yum install wget
+sudo yum install nc
 
 sudo useradd zkadmin -m && sudo usermod --shell /bin/bash zkadmin
 sudo passwd zkadmin
