@@ -14,6 +14,12 @@ gcloud compute firewall-rules create kafka-cluster-vpc-allow-kafka-zookeeper \
 --rules=all --source-tags=kafka \
 --target-tags=kafka
 
+gcloud compute firewall-rules create spark-cluster-vpc-allow-access \
+--description="Allow traffic between Kafka brokers and Zookeeper nodes" \
+--direction=INGRESS --priority=1000 --network=${vpc} --action=ALLOW \
+--rules=all --source-tags=spark \
+--target-tags=spark
+
 gcloud compute firewall-rules create allow-ssh-ingress-from-iap \
   --direction=INGRESS \
   --action=allow \
