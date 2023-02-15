@@ -1,0 +1,40 @@
+gcloud auth login 
+
+gcloud config set project ${project_id}
+
+gcloud config set compute/region ${region}
+
+gcloud compute networks create ${vpc} --subnet-mode custom
+
+gcloud compute networks subnets create ${vpc_subnet} --network ${vpc} --range ${vpc_subnet_cidr} --enable-private-ip-google-access --enable-flow-logs --region=${region}
+
+gcloud compute firewall-rules create kafka-cluster-vpc-allow-kafka-zookeeper \
+--description="Allow traffic between Kafka brokers and Zookeeper nodes" \
+--direction=INGRESS --priority=1000 --network=${vpc} --action=ALLOW \
+--rules=all --source-tags=kafka \
+--target-tags=kafka
+
+gcloud compute firewall-rules create spark-cluster-vpc-allow-access \
+--description="Allow traffic between Kafka brokers and Zookeeper nodes" \
+--direction=INGRESS --priority=1000 --network=${vpc} --action=ALLOW \
+--rules=all --source-tags=spark \
+--target-tags=spark
+
+gcloud compute firewall-rules create allow-ssh-ingress-from-iap \
+  --direction=INGRESS \
+  --action=allow \
+  --rules=tcp:22 \
+  --source-ranges=35.235.240.0/20 \
+  --network=${vpc}
+  
+gcloud compute routers create ${router_name} \
+    --project=${project_id} \
+    --network=${vpc} \
+    --region=${region}
+
+gcloud compute routers nats create ${nat_gateway_name} \
+    --router=${router_name} \
+    --region=${region} \
+    --auto-allocate-nat-external-ips \
+    --nat-all-subnet-ip-ranges \
+    --enable-logging
