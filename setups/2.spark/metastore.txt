@@ -1,0 +1,5 @@
+gcloud metastore services create logging-metastore \
+  --location=${region} \
+  --tier=${dataproc_metastore_tier} \
+  --labels="application=spark" \
+  --consumer-subnetworks="projects/${project_id}/regions/${region}/subnetworks/${vpc_subnet}"
