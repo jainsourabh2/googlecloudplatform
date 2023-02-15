@@ -6,7 +6,7 @@ gcloud config set compute/region ${region}
 
 gcloud compute networks create ${vpc} --subnet-mode custom
 
-gcloud compute networks subnets create ${vpc_subnet} --network ${vpc} --range ${vpc_subnet_cidr}
+gcloud compute networks subnets create ${vpc_subnet} --network ${vpc} --range ${vpc_subnet_cidr} --enable-private-ip-google-access --enable-flow-logs --region=${region}
 
 gcloud compute firewall-rules create kafka-cluster-vpc-allow-kafka-zookeeper \
 --description="Allow traffic between Kafka brokers and Zookeeper nodes" \
