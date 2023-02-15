@@ -1,0 +1,77 @@
+gcloud compute instances create zk \
+    --async \
+    --boot-disk-size 100GB \
+    --image centos-7-v20230203 \
+    --image-project centos-cloud \
+    --machine-type e2-small \
+    --private-network-ip 10.65.0.13 \
+    --scopes=https://www.googleapis.com/auth/cloud-platform \
+    --subnet ${vpc_subnet} \
+    --tags kafka \
+    --labels=application=zookeeper \
+    --zone=${region_zone_a} \
+    --no-address
+    
+gcloud compute instances list --filter="tags.items=kafka"
+
+gcloud beta compute ssh zk --tunnel-through-iap --zone=${region_zone_a}
+
+sudo yum update 
+sudo yum install java-11-openjdk-devel
+sudo yum install wget
+sudo yum install nc
+
+sudo useradd zkadmin -m && sudo usermod --shell /bin/bash zkadmin
+sudo passwd zkadmin
+sudo usermod -aG wheel zkadmin
+su -l zkadmin
+sudo mkdir -p /data/zookeeper
+sudo chown -R zkadmin:zkadmin /data/zookeeper
+cd /opt
+sudo wget https://dlcdn.apache.org/zookeeper/stable/apache-zookeeper-3.7.1-bin.tar.gz
+sudo tar -xvf apache-zookeeper-3.7.1-bin.tar.gz
+sudo chown zkadmin:zkadmin -R  apache-zookeeper-3.7.1-bin
+sudo ln -s apache-zookeeper-3.7.1-bin zookeeper
+sudo chown -h zkadmin:zkadmin /opt/zookeeper
+sudo chown -R zkadmin:zkadmin /opt/zookeeper
+
+vim /opt/zookeeper/conf/zoo.cfg
+
+tickTime=2000
+dataDir=/data/zookeeper
+clientPort=2181
+initLimit=10
+syncLimit=5
+
+cd /opt/zookeeper && /opt/zookeeper/bin/zkServer.sh start
+
+bin/zkServer.sh stop
+
+sudo vim /etc/systemd/system/zookeeper.service
+
+[Unit]
+Description=Zookeeper Daemon
+Documentation=http://zookeeper.apache.org
+Requires=network.target
+After=network.target
+
+[Service]
+Type=forking
+WorkingDirectory=/opt/zookeeper
+User=zkadmin
+Group=zkadmin
+ExecStart=/opt/zookeeper/bin/zkServer.sh start /opt/zookeeper/conf/zoo.cfg
+ExecStop=/opt/zookeeper/bin/zkServer.sh stop /opt/zookeeper/conf/zoo.cfg
+ExecReload=/opt/zookeeper/bin/zkServer.sh restart /opt/zookeeper/conf/zoo.cfg
+TimeoutSec=30
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+gcloud beta compute machine-images \
+  create zookeeper-machine-image- \
+  --source-instance zk \
+  --source-instance-zone ${region_zone_a}
+  
+gcloud compute instances delete zk
