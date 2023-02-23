@@ -1,0 +1,7 @@
+flask
+pickle-mixin
+nltk
+numpy
+pyenchant==3.2.2
+scikit-learn
+sklearn
