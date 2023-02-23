@@ -20,7 +20,8 @@ gcloud compute addresses create kafka-broker-01-ip \
     --labels=application=kafka \
     --zone=${region_zone_a} \
     --no-address
-    
+    --create-disk=auto-delete=yes,boot=yes,device-name=instance-1,image=projects/centos-cloud/global/images/centos-7-v20230203,mode=rw,size=100,type=projects/${project_id}/zones/${region_zone_a}/diskTypes/pd-ssd
+
 gcloud beta compute ssh kafka-broker \
     --tunnel-through-iap \
     --zone=${region_zone_a}
