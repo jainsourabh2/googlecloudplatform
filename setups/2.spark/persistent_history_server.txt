@@ -1,0 +1,9 @@
+gsutil mb gs://${phs_bucket}
+
+gcloud dataproc clusters create ${phs_cluster_name} \
+    --region=${region} \
+    --image-version 2.0-debian10 \
+    --single-node \
+    --enable-component-gateway \
+    --properties=spark:spark.history.fs.logDirectory=gs://${phs_bucket} \
+    --subnet=https://www.googleapis.com/compute/v1/projects/${project_id}/regions/${region}/subnetworks/${vpc_subnet}
