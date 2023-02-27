@@ -1,7 +1,6 @@
 wget https://dlcdn.apache.org/maven/maven-3/3.9.0/binaries/apache-maven-3.9.0-bin.tar.gz
 tar -xvf apache-maven-3.9.0-bin.tar.gz
-mv apache-maven-3.9.0 /opt/
-
+sudo mv apache-maven-3.9.0 /opt/
 
 ##Add below lines to .profile
 M2_HOME='/opt/apache-maven-3.6.3'
