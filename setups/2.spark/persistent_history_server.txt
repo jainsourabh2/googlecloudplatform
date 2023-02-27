@@ -7,4 +7,5 @@ gcloud dataproc clusters create ${phs_cluster_name} \
     --enable-component-gateway \
     --properties=spark:spark.history.fs.logDirectory=gs://${phs_bucket} \
     --no-address \
+    --labels=application=phs \
     --subnet=${vpc_subnet}
