@@ -12,3 +12,7 @@ netstat -ano | find "PORT_NUMBER" | find "LISTEN"
 
 # Find BigQuery JSON Schema from command line
 bq show --schema --format=prettyjson myprojectid:mydataset.mytable > /tmp/myschema.json
+
+# AWS GCP VM comparison
+GCP : https://gcloud-compute.com/amd.html
+AWS : https://instances.vantage.sh/
