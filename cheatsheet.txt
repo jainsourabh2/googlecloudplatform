@@ -1,0 +1,14 @@
+# Running Spark Job using a Java JAR from console.
+./bin/spark-submit \
+  --class com.example.spark.JavaSparkApp \
+  --master local \
+  /home/admin_sourabhsjain_altostrat_com/application/dream11-spark-kafka/target/dataproc-templates-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+# Calculate the size of the message.
+https://www.javainuse.com/bytesizejson
+
+# Find process running on a PORT in Linuc
+netstat -ano | find "PORT_NUMBER" | find "LISTEN"
+
+# Find BigQuery JSON Schema from command line
+bq show --schema --format=prettyjson myprojectid:mydataset.mytable > /tmp/myschema.json
