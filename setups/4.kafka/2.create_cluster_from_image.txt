@@ -39,7 +39,7 @@ gcloud beta compute ssh kafka-broker-01 --tunnel-through-iap --zone=${region_zon
 gcloud beta compute ssh kafka-broker-02 --tunnel-through-iap --zone=${region_zone_b}
 gcloud beta compute ssh kafka-broker-03 --tunnel-through-iap --zone=${region_zone_c}
 
-## Repeat below for all the above 3 machines and change the broker.id and IP address.
+## Repeat below for all the above 3 machines and change the broker.id and IP address and also the <<project-id>> appropriately
 #############################################
 su -l kafka
 
@@ -60,7 +60,7 @@ log.segment.bytes=2147483647
 log.retention.check.interval.ms=300000
 
 ############################# Zookeeper #############################
-zookeeper.connect=zk-01.us-east4-a.c.on-prem-project-337210.internal:2181,zk-02.us-east4-b.c.on-prem-project-337210.internal:2181,zk-03.us-east4-c.c.on-prem-project-337210.internal:2181
+zookeeper.connect=zk-01.us-east4-a.c.<<project-id>>.internal:2181,zk-02.us-east4-b.c.<<project-id>>.internal:2181,zk-03.us-east4-c.c.<<project-id>>.internal:2181
 # Timeout in ms for connecting to zookeeper
 zookeeper.connection.timeout.ms=6000
 
