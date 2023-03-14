@@ -1,26 +1,16 @@
-gcloud compute addresses create kafka-broker-01-ip \
-    --region ${region} --subnet ${vpc_subnet} --addresses 10.65.0.13
-    
-    gcloud compute addresses create kafka-broker-02-ip \
-    --region ${region} --subnet ${vpc_subnet} --addresses 10.65.0.14
-    
-    gcloud compute addresses create kafka-broker-03-ip \
-    --region ${region} --subnet ${vpc_subnet} --addresses 10.65.0.15
-    
-    gcloud compute instances create kafka-broker \
+gcloud compute instances create kafka-broker \
     --async \
-    --boot-disk-size 100GB \
+    --boot-disk-size 1TB \
     --image centos-7-v20230203 \
     --image-project centos-cloud \
     --machine-type ${kafka_machine_type} \
-    --private-network-ip 10.65.0.13 \
     --scopes=https://www.googleapis.com/auth/cloud-platform \
     --subnet ${vpc_subnet} \
     --tags kafka \
     --labels=application=kafka \
     --zone=${region_zone_a} \
     --no-address
-    --create-disk=auto-delete=yes,boot=yes,device-name=instance-1,image=projects/centos-cloud/global/images/centos-7-v20230203,mode=rw,size=100,type=projects/${project_id}/zones/${region_zone_a}/diskTypes/pd-ssd
+    --create-disk=auto-delete=yes,boot=yes,device-name=kafka-broker,image=projects/centos-cloud/global/images/centos-7-v20230203,mode=rw,size=100,type=projects/${project_id}/zones/${region_zone_a}/diskTypes/pd-ssd
 
 gcloud beta compute ssh kafka-broker \
     --tunnel-through-iap \
