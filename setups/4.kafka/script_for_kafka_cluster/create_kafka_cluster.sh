@@ -43,7 +43,7 @@ do
     fi
 
     gcloud beta compute instances create kafka-broker-$i \
-        --source-machine-image kafka-machine-image  \
+        --source-machine-image kafka-machine-image-new  \
         --zone $region_zone \
         --machine-type ${kafka_machine_type} \
         --subnet ${vpc_subnet} \
