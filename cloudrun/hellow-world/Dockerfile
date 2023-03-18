@@ -10,7 +10,7 @@ EXPOSE 3000
 WORKDIR /app
 
 COPY package*.json ./
-COPY index.js ./
+COPY app.js ./
 
 RUN npm install
 
