@@ -1,0 +1,17 @@
+# Copyright 2022 Google. This software is provided as-is, without warranty or representation
+# for any use or purpose. Your use of it is subject to your agreement with Google.
+
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/message-producer:latest || exit 0']
+- name: 'maven'
+  entrypoint: 'mvn'
+  args: ['clean', 'compile', 'package']
+- name: 'gcr.io/cloud-builders/docker'
+  args: [
+    'build', '-f', 'Dockerfile', '-t', '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/message-producer:latest', 
+    '--cache-from', '${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/message-producer:latest',
+    '.'
+  ]
+images: ['${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/message-producer:latest']

@@ -1,1 +1,56 @@
-
+{
+  "name": "Message Consumer Pipeline",
+  "description": "Test pipeline for consuming messages.",
+  "parameters": [
+    {
+      "name": "autoscalingAlgorithm",
+      "label": "Dataflow autoscaling algorith to use.",
+      "helpText": "Valid values are the same as for the autoscalingAlgorithm pipeline parameter.",
+      "isOptional": true
+    },
+    {
+      "name": "bootstrapServers",
+      "label": "Kafka bootstrap servers.",
+      "helpText": "Comma-separated list of Kafka bootstrap servers."
+    },
+    {
+      "name": "topic",
+      "label": "Kafka topic.",
+      "helpText": "Kafka topic to read from."
+    },
+    {
+      "name": "groupId",
+      "label": "Kafka comsumer group id.",
+      "helpText": "Kafka consumer group id. Default is message-consumer-pipeline"
+    },
+    {
+      "name": "outputTable",
+      "label": "BigQuery output table.",
+      "helpText": "BigQuery fully-qualified output table.",
+      "isOptional": true
+    },
+    {
+      "name": "bigQueryUseWriteApi",
+      "label": "Whether to use the BigQuery Storage Write API.",
+      "helpText": "Yes if set to true, otherwise use the Streaming Insert API. Default is false.",
+      "isOptional": true
+    },
+    {
+      "name": "bigQueryWriteTriggerSeconds",
+      "label": "BigQuery Storage Write API trigger seconds.",
+      "helpText": "BigQuery Storage Write API triggering frequency in seconds. Default is 5 seconds.",
+      "isOptional": true
+    },
+    {
+      "name": "bigQueryNumWriteStreams",
+      "label": "Number of BigQuery Storage Write API streams.",
+      "helpText": "Number of BigQuery Storage Write API streams. Default is 500.",
+      "isOptional": true
+    },
+    {
+      "name": "sinkType",
+      "label": "Output sink type.",
+      "helpText": "Can be either 'reshuffle' or 'bigquery'."
+    }
+  ]
+}
