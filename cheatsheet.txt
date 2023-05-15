@@ -16,3 +16,6 @@ bq show --schema --format=prettyjson myprojectid:mydataset.mytable > /tmp/mysche
 # AWS GCP VM comparison
 GCP : https://gcloud-compute.com/amd.html
 AWS : https://instances.vantage.sh/
+
+#Create a GKE Cluster
+gcloud container clusters create-auto hello-cluster --region=us-central1
