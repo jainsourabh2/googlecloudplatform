@@ -19,3 +19,5 @@ AWS : https://instances.vantage.sh/
 
 #Create a GKE Cluster
 gcloud container clusters create-auto hello-cluster --region=us-central1
+
+gcloud projects list --filter="project_number=945591414910"
