@@ -21,7 +21,7 @@ service_compute = discovery.build('compute', 'v1', credentials=credentials)
 hierarchy = 'folders/655082281051'
 request = service.projects().list(parent=hierarchy)
 
-ignore_projects = ['euphoric-stone-394707','protean-fabric-394522','delivr-394508']
+ignore_projects = ['','','']
 while request is not None:
     response = request.execute()
     for project in response.get('projects', []):
