@@ -18,7 +18,7 @@ service_compute = discovery.build('compute', 'v1', credentials=credentials)
 
 
 # If you want at org level replace the value below as organizations/org-number
-hierarchy = 'folders/655082281051'
+hierarchy = 'folders/<<folder-number>>'
 request = service.projects().list(parent=hierarchy)
 
 ignore_projects = ['','','']
