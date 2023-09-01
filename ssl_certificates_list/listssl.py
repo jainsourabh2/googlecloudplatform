@@ -8,12 +8,12 @@ import csv
 from googleapiclient.discovery import build
 import google.auth
 
+ORGANIZATION_ID = '641067203402'
+
 def listAllProjects():
     # Start by listing all the projects under the organization
     filter='parent.type="organization" AND parent.id="{}" AND lifecycleState="ACTIVE"'.format(ORGANIZATION_ID)
     projects_under_org = rm_v1_client.projects().list(filter=filter).execute()
-
-    print(len(projects_under_org))
 
     all_projects=[]
 
@@ -62,9 +62,7 @@ rm_v1_client = build('cloudresourcemanager', 'v1', credentials=credentials, cach
 # V2 is needed to call folder-related methods
 rm_v2_client = build('cloudresourcemanager', 'v2', credentials=credentials, cache_discovery=False) 
 
-ORGANIZATION_ID = '641067203402'
-
-filter='parent.type="folders" AND parent.id="{}"'.format('435911974745')
+filter='parent.type="folders" AND parent.id="{}" AND lifecycleState="ACTIVE"'.format(ORGANIZATION_ID)
 
 f = open('./ssl_certificates.csv', 'w')
 writer = csv.writer(f,delimiter=',',lineterminator='\r\n',quotechar = "'")
@@ -75,7 +73,7 @@ service = discovery.build('cloudresourcemanager', 'v3', credentials=credentials)
 service_compute = discovery.build('compute', 'v1', credentials=credentials)
 
 projects = listAllProjects()
-print(projects)
+
 ignore_projects = ['euphoric-stone-394707','protean-fabric-394522','delivr-394508']
 
 for project_id in projects:
@@ -83,14 +81,17 @@ for project_id in projects:
         request_ssl = service_compute.sslCertificates().list(project=project_id)
         while request_ssl is not None:
             response_ssl = request_ssl.execute()
-            print(response_ssl)
             if 'items' in response_ssl.keys():
                 for ssl_certificate in response_ssl['items']:
-                    print('hello4')
+
                     pprint("projectid: " + project_id)
                     pprint("name: " + ssl_certificate["name"])
                     pprint("creationTimestamp: " + ssl_certificate["creationTimestamp"])
-                    pprint("expireTime: " + ssl_certificate["expireTime"])
-                    writer.writerow([project_id + "," + ssl_certificate["name"] + "," + ssl_certificate["creationTimestamp"] + "," + ssl_certificate["expireTime"]])
+                    if "expireTime" in ssl_certificate:
+                        pprint("expireTime: " + ssl_certificate["expireTime"])
+                        writer.writerow([project_id + "," + ssl_certificate["name"] + "," + ssl_certificate["creationTimestamp"] + "," + ssl_certificate["expireTime"]])
+                    else:
+                        pprint("expireTime: Not Available")
+                        writer.writerow([project_id + "," + ssl_certificate["name"] + "," + ssl_certificate["creationTimestamp"] + ",'not Available'" ])
                     pprint("----------------------------------------------")
             request_ssl = service_compute.sslCertificates().list_next(previous_request=request_ssl, previous_response=response_ssl)
