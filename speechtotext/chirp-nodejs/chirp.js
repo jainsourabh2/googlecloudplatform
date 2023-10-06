@@ -6,11 +6,11 @@ const fs = require('fs');
 const client = new speech.SpeechClient({apiEndpoint: "us-central1-speech.googleapis.com"});
 
 // Your local audio file to transcribe
-const audioFilePath = "gs://customer-demos/audio-files/output.wav";
+const audioFilePath = "gs://<<bucket-name>>/audio-files/output.wav";
 // Full recognizer resource name
 const recognizerName = "projects/<<project-number>>/locations/us-central1/recognizers/<<recognizer>>";
 // The output path of the transcription result.
-const workspace = "gs://customer-demos/transcripts";
+const workspace = "gs://<<bucket-name>>/transcripts";
 
 const recognitionConfig = {
   autoDecodingConfig: {},
