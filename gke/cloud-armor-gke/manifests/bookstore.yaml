@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: bookstore-english
   namespace: bookstore-en
-  annotations:
-    cloud.google.com/backend-config: '{"default": "cloudarmor-allow-my-ip"}'
 spec:
   replicas: 2
   selector:
