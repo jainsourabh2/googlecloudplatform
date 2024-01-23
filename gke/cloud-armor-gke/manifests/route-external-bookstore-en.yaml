@@ -1,0 +1,18 @@
+---
+kind: HTTPRoute
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: route-external-bookstore-en
+  namespace: bookstore-en
+spec:
+  parentRefs:
+  - kind: Gateway
+    name: external-http
+    namespace: bookstore-en
+  rules:
+  - matches:
+    - path:
+        value: /en
+    backendRefs:
+    - name: bookstore-english
+      port: 8080
