@@ -1,0 +1,12 @@
+apiVersion: networking.gke.io/v1
+kind: GCPBackendPolicy
+metadata:
+  name: my-backend-policy
+  namespace: bookstore-en
+spec:
+  default:
+    securityPolicy: block-all-http-requests
+  targetRef:
+    group: ""
+    kind: Service
+    name: bookstore-english
