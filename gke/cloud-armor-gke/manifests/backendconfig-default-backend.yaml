@@ -1,0 +1,10 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: nginx-backendconfig-db
+spec:
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 15
+    type: HTTP
+    requestPath: /
