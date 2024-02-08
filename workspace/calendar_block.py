@@ -66,12 +66,20 @@ def create_meet_link():
         {'method': 'popup', 'minutes': 10},
         ],
     },
+    'conferenceData': {
+        'createRequest': {
+            'requestId': 1234,  # A unique request ID 
+            'conferenceSolutionKey': {
+                'type': 'hangoutsMeet' 
+            }
+        }
+    },
     }
 
     calendar_id = 'primary'  # Use 'primary' for the user's default calendar
 
     try:
-        event = service.events().insert(calendarId=calendar_id, body=event).execute()
+        event = service.events().insert(calendarId=calendar_id, body=event, conferenceDataVersion=1).execute()
         meet_link = event.get('hangoutLink')
         print(f'Event created: {event.get("htmlLink")}')
         print(f'Google Meet Link: {meet_link}')
