@@ -21,3 +21,6 @@ AWS : https://instances.vantage.sh/
 gcloud container clusters create-auto hello-cluster --region=us-central1
 
 gcloud projects list --filter="project_number=945591414910"
+
+#Log into the pod.
+kubectl exec -n <name space here> <pod-name>  -it -- /bin/sh
