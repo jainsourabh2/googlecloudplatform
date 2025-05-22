@@ -26,8 +26,8 @@ Before running the application, you need to:
 1. Clone this repository:
 
    ```bash
-   git clone git@github.com:GoogleCloudPlatform/generative-ai.git
-   cd generative-ai/gemini/multimodal-live-api/gradio-voice
+   git clone https://github.com/jainsourabh2/googlecloudplatform.git
+   cd generativeai/negotiator_agent
    ```
 
 2. Install the required dependencies:
