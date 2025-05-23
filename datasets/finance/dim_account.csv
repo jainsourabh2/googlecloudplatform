@@ -1,0 +1,6 @@
+account_id,type
+A100,Savings
+A101,Checking
+A102,Loan
+A103,Credit
+A104,Mortgage

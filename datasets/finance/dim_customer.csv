@@ -1,0 +1,6 @@
+customer_id,name,segment
+C100,Customer 0,Retail
+C101,Customer 1,Corporate
+C102,Customer 2,Retail
+C103,Customer 3,Wealth
+C104,Customer 4,SME

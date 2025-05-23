@@ -1,0 +1,6 @@
+risk_score_id,level
+RS1,Low
+RS2,Medium
+RS3,High
+RS4,Critical
+RS5,Unknown

@@ -1,0 +1,6 @@
+fraud_status_id,status
+FS1,No Fraud
+FS2,Suspected
+FS3,Confirmed
+FS4,Cleared
+FS5,Pending

@@ -1,0 +1,6 @@
+loan_type_id,type
+LT1,Personal
+LT2,Auto
+LT3,Home
+LT4,Education
+LT5,Business

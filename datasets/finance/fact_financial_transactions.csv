@@ -1,0 +1,6 @@
+transaction_id,transaction_date_key,customer_id,account_id,product_id,branch_id,transaction_type_id,currency_id,channel_id,region_id,employee_id,risk_score_id,merchant_id,loan_type_id,fraud_status_id,payment_mode_id,time_id,tax_code_id,credit_rating_id,investment_plan_id,policy_id,amount
+T1,20240101,C100,A100,P100,B100,TT1,CUR1,CH1,R1,E1,RS1,M1,LT1,FS1,PM1,T1,TX1,CR1,IP1,PO1,1000
+T2,20240102,C101,A101,P101,B101,TT2,CUR2,CH2,R2,E2,RS2,M2,LT2,FS2,PM2,T2,TX2,CR2,IP2,PO2,2000
+T3,20240103,C102,A102,P102,B102,TT3,CUR3,CH3,R3,E3,RS3,M3,LT3,FS3,PM3,T3,TX3,CR3,IP3,PO3,3000
+T4,20240104,C103,A103,P103,B103,TT4,CUR4,CH4,R4,E4,RS4,M4,LT4,FS4,PM4,T4,TX4,CR4,IP4,PO4,4000
+T5,20240105,C104,A104,P104,B104,TT5,CUR5,CH5,R5,E5,RS5,M5,LT5,FS5,PM5,T5,TX5,CR5,IP5,PO5,5000

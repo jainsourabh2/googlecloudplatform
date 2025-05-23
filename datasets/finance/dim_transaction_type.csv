@@ -1,0 +1,6 @@
+transaction_type_id,description
+TT1,Deposit
+TT2,Withdrawal
+TT3,Payment
+TT4,Fee
+TT5,Transfer

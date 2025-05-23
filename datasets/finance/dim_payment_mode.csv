@@ -1,0 +1,6 @@
+payment_mode_id,mode
+PM1,Cash
+PM2,Card
+PM3,Online
+PM4,Cheque
+PM5,Wallet
