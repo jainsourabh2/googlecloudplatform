@@ -24,3 +24,6 @@ gcloud projects list --filter="project_number=945591414910"
 
 #Log into the pod.
 kubectl exec -n <name space here> <pod-name>  -it -- /bin/sh
+
+#Find process on a specific port
+lsof -n -i :80 | grep LISTEN
