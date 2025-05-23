@@ -1,0 +1,47 @@
+📊 Customer and Revenue Insights
+"What is the monthly revenue trend for each customer segment over the past 2 years?"
+
+"Which customer segments have the highest average transaction value, and how does that vary by product category?"
+
+"What is the churn rate of customers who interacted only through mobile channels vs those who used multiple channels?"
+
+🏦 Branch and Regional Performance
+"Which regions are generating the highest revenue from high-risk customers?"
+
+"What is the average transaction volume and value per branch, segmented by product category and loan type?"
+
+"Compare the fraud rate between urban and rural branches in Q1 and Q4 of last year."
+
+🛠️ Operational & Employee Analysis
+"Which employees handled the highest volume of high-value transactions last quarter?"
+
+"Is there a correlation between employee performance and the number of fraud-related transactions processed?"
+
+🛒 Product & Merchant Analysis
+"What are the top-performing products in terms of revenue contribution by merchant?"
+
+"Which merchants have the highest transaction counts for each loan type over the last 12 months?"
+
+💳 Risk, Credit & Fraud
+"What is the average transaction value by credit rating bucket and how does it vary by risk level?"
+
+"Analyze fraud transactions by payment mode and identify the top 3 most vulnerable modes."
+
+"What is the breakdown of fraud status across investment plans and policy types?"
+
+🕒 Time-Based & Seasonal Trends
+"What are the transaction volume and amount patterns by hour of the day and day of the week?"
+
+"Compare quarter-over-quarter revenue growth by transaction type and channel for the past 3 years."
+
+🧾 Tax & Policy Evaluation
+"Which tax codes are associated with the highest transaction amounts and in which regions?"
+
+"How does policy adoption correlate with account types and customer segments?"
+
+🔀 Multi-Dimensional & Drill-Down Analysis
+"Drill down from total revenue to product → region → branch → channel to identify key revenue drivers."
+
+"How do high-risk transactions vary across channels, payment modes, and employee IDs?"
+
+"For each policy and investment plan combination, what is the fraud ratio and average transaction value?"
