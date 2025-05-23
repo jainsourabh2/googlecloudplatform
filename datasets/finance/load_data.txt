@@ -1,0 +1,24 @@
+# Dimension Tables
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_date ./dim_date.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_customer ./dim_customer.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_account ./dim_account.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_product ./dim_product.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_branch ./dim_branch.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_transaction_type ./dim_transaction_type.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_currency ./dim_currency.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_channel ./dim_channel.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_region ./dim_region.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_employee ./dim_employee.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_risk_score ./dim_risk_score.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_merchant ./dim_merchant.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_loan_type ./dim_loan_type.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_fraud_status ./dim_fraud_status.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_payment_mode ./dim_payment_mode.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_time ./dim_time.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_tax_code ./dim_tax_code.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_credit_rating ./dim_credit_rating.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_investment_plan ./dim_investment_plan.csv
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.dim_policy ./dim_policy.csv
+
+# Fact Table
+bq load --skip_leading_rows=1 --source_format=CSV cloud-demos-gcp:fin_data.fact_financial_transactions ./fact_financial_transactions_large.csv
