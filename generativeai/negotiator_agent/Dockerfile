@@ -1,19 +1,19 @@
 # syntax=docker/dockerfile:1
 
-FROM node:12.18.1
+FROM python:3.12
 
 ENV NODE_ENV=production
 
-ENV PORT 3000
-EXPOSE 3000
+ENV PORT 7860
+EXPOSE 7860
 
 WORKDIR /app
 
-COPY package*.json ./
-COPY app.js ./
+COPY *.py ./
+COPY *.html ./
+COPY *.css ./
+COPY *.txt ./
 
-RUN npm install
+RUN pip3 install -r requirements.txt
 
-COPY . ./
-
-CMD [ "python3", "app.js" ]
+CMD [ "python3", "app.py" ]
