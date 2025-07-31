@@ -11,7 +11,7 @@ AGENT_DISPLAY_NAME="" # The display name for the agent, e.g., "Google Calendar A
 AGENT_DESCRIPTION="" # A brief description of what the agent does
 TOOL_DESCRIPTION="" # A description of the tool used by the agent
 REASONING_ENGINE="" # The full resource name of the reasoning engine, e.g., "projects/<PROJECT_NUMBER>/locations/<LOCATION>/reasoningEngines/<REASONING_ENGINE_ID>"
-AUTH_ID="" # The authorization ID, e.g., "gcal-agent-auth"
+# AUTH_ID="" # The authorization ID, e.g., "gcal-agent-auth"
 DISCOVERY_ENGINE_API_BASE_URL="https://discoveryengine.googleapis.com"
 
 # --- Script Body ---
@@ -33,8 +33,8 @@ curl -X POST \
       "provisioned_reasoning_engine": {
         "reasoning_engine": "'"${REASONING_ENGINE}"'"
       },
-      "authorizations": [
-        "projects/'"${PROJECT_NUMBER}"'/locations/global/authorizations/'"${AUTH_ID}"'"
-      ]
+      # "authorizations": [
+      #   "projects/'"${PROJECT_NUMBER}"'/locations/global/authorizations/'"${AUTH_ID}"'"
+      # ]
     }
   }'
